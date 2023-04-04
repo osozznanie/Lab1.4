@@ -1,0 +1,85 @@
+using System;
+
+class StudentTable
+{
+    private string[,] data;
+    private int numStudentsWithLastNameNechay;
+
+    public StudentTable(string[,] data)
+    {
+        this.data = data;
+        this.numStudentsWithLastNameNechay = CountStudentsWithLastNameNechay();
+    }
+
+    public string this[string columnName]
+    {
+        get
+        {
+            int columnIndex = GetColumnIndex(columnName);
+            if (columnIndex == -1)
+            {
+                throw new IndexOutOfRangeException("Invalid column name: " + columnName);
+            }
+            string[] columnData = GetColumnData(columnIndex);
+            return string.Join(Environment.NewLine, columnData);
+        }
+    }
+
+    public int NumStudentsWithLastNameNechay
+    {
+        get { return numStudentsWithLastNameNechay; }
+    }
+
+    private int CountStudentsWithLastNameNechay()
+    {
+        int count = 0;
+        for (int i = 0; i < data.GetLength(0); i++)
+        {
+            if (data[i, 1] == "Nechay")
+            {
+                count++;
+            }
+        }
+        return count;
+    }
+
+    private int GetColumnIndex(string columnName)
+    {
+        for (int i = 0; i < data.GetLength(1); i++)
+        {
+            if (data[0, i] == columnName)
+            {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+    private string[] GetColumnData(int columnIndex)
+    {
+        string[] columnData = new string[data.GetLength(0) - 1];
+        for (int i = 1; i < data.GetLength(0); i++)
+        {
+            columnData[i - 1] = data[i, columnIndex];
+        }
+        return columnData;
+    }
+}
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        string[,] data = {
+            { "First Name", "Last Name", "Middle Name" },
+            { "John", "Nechay", "Doe" },
+            { "Jane", "Doe", "Smith" },
+            { "Bob", "Nechay", "Johnson" },
+        };
+        StudentTable table = new StudentTable(data);
+        Console.WriteLine("Enter column name to display:");
+        string columnName = Console.ReadLine();
+        Console.WriteLine(table[columnName]);
+        Console.WriteLine("Number of students with last name Nechay: " + table.NumStudentsWithLastNameNechay);
+    }
+}
